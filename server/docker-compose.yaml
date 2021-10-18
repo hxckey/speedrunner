@@ -1,0 +1,30 @@
+
+version: '1'
+services: 
+  server: 
+    image: node:12.22.6
+    working_dir: /code
+    ports: 
+      - 3000:3000
+    environment:
+      - DB_NAME=speedrun_chest
+      - DB_CONNECTION=mongodb://georgehickey:speedrun_chest@db:27017
+    depends_on:
+      - db
+    volumes:
+      - type: bind
+        source: ./api
+        target: /code
+    command: bash -c "npm install && npm start"
+
+  db:
+    image: mongo:latest
+    volumes: 
+      - "dbdata:/var/lib/mongodb/data"
+      - "./db/seeds.js:/docker-entrypoint-initdb.d/seeds.js:ro"
+    environment: 
+      - MONGO_INITDB_ROOT_USERNAME=georgehickey
+      - MONGO_INITDB_DATABASE=speedrun_chest
+      - MONGO_INITDB_ROOT_PASSWORD=superfastruns
+volumes:
+  dbdata:
